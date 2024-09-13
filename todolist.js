@@ -25,6 +25,16 @@ class TaskManager {
     deleteTask(taskTitle) {
         this.tasks = this.tasks.filter(task => task.title !== taskTitle);
     }
+
+    isDuplicateTask(newTask) {
+        return this.tasks.some(task =>
+            task.title === newTask.title &&
+            task.description === newTask.description &&
+            task.author === newTask.author &&
+            task.assignee === newTask.assignee &&
+            task.priority === newTask.priority
+        );
+    }
 }
 
 const taskManager = new TaskManager();
@@ -46,8 +56,13 @@ document.getElementById('addTaskButton').addEventListener('click', () => {
     if (title && description && author && assignee && priority) {
         const task = new Task(title, description, author, assignee, priority);
 
+        if (taskManager.isDuplicateTask(task)) {
+            alert("Cette tâche existe déjà.");
+            return;
+        }
+
         if (editingTaskTitle) {
-            // Si en mode modification
+
             taskManager.updateTask(editingTaskTitle, task);
             updateTaskInDOM(editingTaskTitle, task);
             editingTaskTitle = null;
