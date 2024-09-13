@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste de tâches - Sticky Notes avec Bootstrap</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Quicksand', sans-serif;
+            color: #333;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: -1;
+        }
+
+
+        h5, label {
+            font-weight: 600;
+        }
+
+        .priority {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .priority.low {
+            background-color: green;
+        }
+
+        .priority.medium {
+            background-color: orange;
+        }
+
+        .priority.high {
+            background-color: red;
+        }
+
+        /* Animations */
+        @keyframes appear {
+            0% { transform: scale(0) rotate(3deg); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .appear {
+            animation: appear 0.5s forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .explode {
+            animation: explode 0.5s forwards;
+        }
+
+
+        .sticky-note {
+            background-color: #ffeb3b;
+            border: 2px solid #fbc02d;
+            padding: 15px;
+            margin: 10px;
+            width: 220px;
+            height: 220px;
+            box-shadow: 12px 12px 20px rgba(0, 0, 0, 0.15);
+            font-size: 14px;
+            position: relative;
+            display: inline-block;
+            word-wrap: break-word;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .sticky-note:hover {
+            transform: translateY(-5px);
+            box-shadow: 14px 14px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .sticky-note .title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .sticky-note .description {
+            margin-bottom: 10px;
+        }
+
+        .sticky-note .author, .sticky-note .assignee {
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin-top: 40px;
+            padding-bottom: 40px;
+        }
+
+
+        .modal-header {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        #addTaskButton {
+            background-color: #ff9800;
+            color: white;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        #addNoteButton {
+            background-color: #ffc107;
+            color: white;
+            margin-top: 24px;
+        }
+
+        #addNoteButton:hover, #addTaskButton:hover {
+            background-color: #e68900;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar {
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        #emptyPostIt {
+            background-color: #ffeb3b;
+            border: 2px solid #fbc02d;
+            padding: 15px;
+            margin: 10px;
+            width: 220px;
+            height: 220px;
+            box-shadow: 12px 12px 15px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            display: inline-block;
+            word-wrap: break-word;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #taskList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Gestionnaire de tâches</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <button id="addNoteButton" class="btn btn-warning mb-4" data-toggle="modal" data-target="#taskModal">Ajouter une tâche</button>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="taskList">
+    <div id="emptyPostIt" class="sticky-note">
+        <div class="title">Ajoutez votre première tâche !</div>
+    </div>
+</div>
+
+
+
+<div id="taskModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Nouvelle tâche</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="taskTitle">Titre :</label>
+                        <input id="taskTitle" type="text" class="form-control" placeholder="Titre">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Description :</label>
+                        <input id="taskDescription" type="text" class="form-control" placeholder="Description">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskAuthor">Auteur :</label>
+                        <input id="taskAuthor" type="text" class="form-control" placeholder="Auteur">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskAssignee">Assigné à :</label>
+                        <input id="taskAssignee" type="text" class="form-control" placeholder="Entrez la personne assignée">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">Priorité :</label>
+                        <select id="taskPriority" class="form-control">
+                            <option value="low">Faible</option>
+                            <option value="medium">Moyenne</option>
+                            <option value="high">Haute</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button id="addTaskButton" class="btn btn-warning">Ajouter la tâche</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+<script src="todolist.js"></script>
+</body>
+</html>
