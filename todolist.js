@@ -47,7 +47,7 @@ document.getElementById('addTaskButton').addEventListener('click', () => {
         const task = new Task(title, description, author, assignee, priority);
 
         if (editingTaskTitle) {
-            // Si en mode modification
+
             taskManager.updateTask(editingTaskTitle, task);
             updateTaskInDOM(editingTaskTitle, task);
             editingTaskTitle = null;
@@ -110,7 +110,6 @@ document.getElementById('taskList').addEventListener('click', (event) => {
         const taskTitle = event.target.parentElement.querySelector('.title').textContent;
         const task = taskManager.tasks.find(task => task.title === taskTitle);
 
-        // Remplir le formulaire avec les informations de la tâche à modifier
         document.getElementById('taskTitle').value = task.title;
         document.getElementById('taskDescription').value = task.description;
         document.getElementById('taskAuthor').value = task.author;
